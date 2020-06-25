@@ -5,7 +5,7 @@ const ThingApiService = {
   getThings() {
     return fetch(`${config.API_ENDPOINT}/things`, {
       headers: {
-        authorization: `basic ${TokenService.getAuthToken()}`,
+       // doesn't need auth token because it's a public endpoint
       },
     }).then((res) =>
       !res.ok ? res.json().then((e) => Promise.reject(e)) : res.json()
@@ -14,6 +14,7 @@ const ThingApiService = {
   getThing(thingId) {
     return fetch(`${config.API_ENDPOINT}/things/${thingId}`, {
       headers: {
+        // auth token required for /things/:id
         authorization: `basic ${TokenService.getAuthToken()}`,
       },
     }).then((res) =>
@@ -23,6 +24,7 @@ const ThingApiService = {
   getThingReviews(thingId) {
     return fetch(`${config.API_ENDPOINT}/things/${thingId}/reviews`, {
       headers: {
+        // auth token required for /things/:id/reviews
         authorization: `basic ${TokenService.getAuthToken()}`,
       },
     }).then((res) =>
@@ -34,6 +36,8 @@ const ThingApiService = {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        // auth token required for POSTing reviews to /reviews
+        'authorization': `basic ${TokenService.getAuthToken()}`
       },
       body: JSON.stringify({
         thing_id: thingId,

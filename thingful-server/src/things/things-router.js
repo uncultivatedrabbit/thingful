@@ -14,6 +14,7 @@ thingsRouter.route("/").get((req, res, next) => {
 
 thingsRouter
   .route("/:thing_id")
+  // require the auth token on all thing id routes
   .all(requireAuth)
   .all(checkThingExists)
   .get((req, res) => {
@@ -22,6 +23,7 @@ thingsRouter
 
 thingsRouter
   .route("/:thing_id/reviews/")
+  // require the auth token on all  reviews end points
   .all(requireAuth)
   .all(checkThingExists)
   .get((req, res, next) => {

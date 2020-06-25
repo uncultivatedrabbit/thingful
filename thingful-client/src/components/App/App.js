@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import Header from "../Header/Header";
+// uncomment out the private and public routes
 import PrivateRoute from "../Utils/PrivateRoute";
 import PublicOnlyRoute from "../Utils/PublicOnlyRoute";
 import ThingListPage from "../../routes/ThingListPage/ThingListPage";
@@ -30,8 +31,10 @@ class App extends Component {
           )}
           <Switch>
             <Route exact path={"/"} component={ThingListPage} />
+            {/* change login and register to public routes */}
             <PublicOnlyRoute path={"/login"} component={LoginPage} />
             <PublicOnlyRoute path={"/register"} component={RegistrationPage} />
+            {/* change thing route to private */}
             <PrivateRoute path={"/thing/:thingId"} component={ThingPage} />
             <Route component={NotFoundPage} />
           </Switch>
