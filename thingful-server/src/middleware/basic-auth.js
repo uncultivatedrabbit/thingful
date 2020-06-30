@@ -1,6 +1,8 @@
 // created new folder MIDDLEWARE and a new file
 // called basic-auth to handle validating basic auth
 // on server
+const bcrypt = require("bcryptjs");
+const AuthService = require("../auth/auth-service");
 
 function requireAuth(req, res, next) {
   // get auth token
@@ -15,26 +17,30 @@ function requireAuth(req, res, next) {
   }
 
   // pull tokenUsername and password from basicToken
-  const [tokenUserName, tokenPassword] = Buffer.from(basicToken, "base64")
-    .toString()
-    .split(":");
+  const [tokenUserName, tokenPassword] = AuthService.parseBasicToken(
+    basicToken
+  );
 
   // if the username or password don't exist throw an error
   if (!tokenUserName || !tokenPassword) {
     return res.status(401).json({ error: "Unauthorized request 1" });
   }
   // select user from DB with username matches
-  req.app
-    .get("db")("thingful_users")
-    .where({ user_name: tokenUserName })
-    .first()
+  AuthService.getUserWithUserName(req.app.get("db"), tokenUserName)
     .then((user) => {
-      if (!user || user.password !== tokenPassword) {
+      if (!user) {
         return res.status(401).json({ error: "Unauthorized request 2" });
       }
       // user passed as request user
-      req.user = user;
-      next();
+      return bcrypt
+        .compare(tokenPassword, user.password)
+        .then((passwordsMatch) => {
+          if (!passwordsMatch) {
+            return res.status(401).json({ error: "Unauthorized request 3" });
+          }
+          req.user = user;
+          next();
+        });
     })
     .catch(next);
 }

@@ -6,6 +6,8 @@ import './Header.css'
 
 export default class Header extends Component {
   handleLogoutClick = () => {
+    // handle logging out and clearing the auth token
+    TokenService.clearAuthToken();
   }
 
   renderLogoutLink() {
